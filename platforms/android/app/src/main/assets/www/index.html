@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <title>Lista Artistas</title>
+    <style>
+      #list {
+        background-color: #4885ed;
+      }
+      li {
+        color: white;
+        font-size: 18px;
+        font-family: "Times New Roman";
+        padding: 2px;
+      }
+      button {
+        font-size: 16px;
+        color: white;
+        background-color: #093887;
+      }
+      b {
+        font-family: "Arial";
+      }
+      #add {
+        font-size: 16px;
+        color: white;
+        background-color: #4885ed;
+      }
+    </style>
+  </head>
+  <body>
+    <ol id="list"></ol>
+    <b>Nombre del artista:</b>
+    <input type="text" id="txtName" value="">
+    <button id="add" onClick="addArtists()">Agregar a la lista</button>
+    <script type="text/javascript">
+      var check = 0;
+
+      function addArtists() {
+        var query = $("#txtName").val();
+        if (check == 0 && query != "") {
+          $.ajax({
+            method: "GET",
+            url: "https://musicbrainz.org/ws/2/artist?query="+query,
+            dataType: "json",
+          }).done(function (msg) {
+            for(var item in msg.artists) {
+              //console.log(msg.artists[item]);
+              var node = $("<li>"+JSON.stringify(msg.artists[item].name).substr(1, msg.artists[item].name.length)+"</li>");
+              $("#list").append(node);
+              check = 1;
+            };
+          }).fail(function () {
+          	alert("ERROR");
+          });
+          //Para borrar el texto del input
+          $("#txtName").val("");
+        } else {
+          if (check == 1 && query != ""){
+            alert("Ya has añadido los datos a la lista!");
+          } else {
+            alert("Introduce el nombre de un artista para poder buscarlo en musicbrainz!")
+          }
+
+        }
+      }
+    </script>
+  </body>
+</html>
